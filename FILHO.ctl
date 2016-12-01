@@ -1,0 +1,7 @@
+6,1
+NOME,C,nn,ord,chv
+IDADE,I,nn
+CPF,I,nn
+INTERESSE,C
+CODIGO,I,nn
+SEILA,C
