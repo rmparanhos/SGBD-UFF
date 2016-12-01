@@ -5,54 +5,164 @@
 int num = 0;
 int trigger = 0;
 void select(char* nomeTab, char* atributo, char* operando, char* valor, char* arqAlg, char* arqDad, char* arqCtl){ //gambiarra pra testar o project, ignorar
-    if(!trigger){
-	trigger++;
-	printf("select %s %s %s %s %s %s %s \n",nomeTab,atributo,operando,valor,arqAlg,arqDad,arqCtl);
-    char nome_da_tabela_ctl[31];
+    printf("select %s %s %s %s %s %s %s\n",nomeTab,atributo,operando,valor,arqAlg,arqDad,arqCtl);
+	char nome_da_tabela_ctl[31];
 	char nome_da_tabela_alg[31];
 	char nome_da_tabela_dad[31];
+	
 	strcpy(nome_da_tabela_ctl,nomeTab);
 	strcat(nome_da_tabela_ctl,".ctl");
-	strcpy(nome_da_tabela_alg,nomeTab);
+	strcpy(nome_da_tabela_alg,arqAlg);
 	strcat(nome_da_tabela_alg,".alg");
 	strcpy(nome_da_tabela_dad,nomeTab);
 	strcat(nome_da_tabela_dad,".dad");	
-	strcat(arqAlg,".alg");
-	FILE *fp_alg = fopen(arqAlg, "rt");
-	if (!fp_alg) {
+	
+	
+    strcat(arqAlg,".alg");
+	FILE *fp_saida_alg = fopen(arqAlg, "rt");
+	if (!fp_saida_alg) {
 		printf("Problemas com arquivo.alg");
 		exit(1);
 	}
-	FILE *fp_dad = fopen(arqDad, "wt");
-	if (!fp_dad) {
+	
+	FILE *fp_saida_dad = fopen(arqDad, "wt");
+	if (!fp_saida_dad) {
 		printf("Problemas com arquivo.dad");
 		exit(1);
 	}
-	FILE *fp_ctl = fopen(arqCtl, "wt");
-	if (!fp_ctl) {
+	FILE *fp_saida_ctl = fopen(arqCtl, "wt");
+	if (!fp_saida_ctl) {
 		printf("Problemas com arquivo.ctl");
 		exit(1);
 	}
-	
-		
-	FILE *fp_tabela_ctl = fopen(nome_da_tabela_ctl, "rt");
-	if (!fp_tabela_ctl) {
+	FILE *fp_entrada_ctl = fopen(nome_da_tabela_ctl, "rt");
+	if (!fp_entrada_ctl) {
 		printf("Problemas com tabela.ctl");
 		exit(1);
 	}
+	
+	FILE *fp_entrada_dad = fopen(nome_da_tabela_dad, "rt");
+	if (!fp_entrada_dad) {
+		printf("Problemas com tabela.dad");
+		exit(1);
+	}
+	int grau;
+	int cardinalidade;
+	int r = fscanf(fp_entrada_ctl, "%d,%d",&grau,&cardinalidade);
 	char leitura[51];
-	int r = fscanf(fp_tabela_ctl,"%s",leitura);
-	while(r==1){
-
-		fprintf(fp_ctl,"%s\n",leitura);
-		r = fscanf(fp_tabela_ctl,"%s",leitura);
+	char nomeAtributo[31];
+	char tipoAtributo;
+	int indexAtributo = 0;
+	r = fscanf(fp_entrada_ctl,"%s",&leitura);
+	
+	while(r != -1){ //descubro o indice do atributo e o tipo do atributo
+		int i = 0;
+		while(leitura[i] != ','){
+			nomeAtributo[i] = leitura[i];
+			i++;
+		}
+		if(strcmp(nomeAtributo,atributo)==0){
+			i++;
+			while(leitura[i] != ','){
+				tipoAtributo = leitura[i];
+				i++;
+			}
+			break;
+		}
+		r = fscanf(fp_entrada_ctl,"%s",&leitura);
+		indexAtributo++;
 	}
-	fprintf(fp_dad,"FELIPE,NULO,JS,NULO,2434,");
-	fclose(fp_ctl);
-	fclose(fp_tabela_ctl);
-	fclose(fp_dad);
-	fclose(fp_alg);
+	rewind(fp_entrada_ctl);
+	cardinalidade = 0;
+	char atrSeraComparado[31];
+	r = fscanf(fp_entrada_dad,"%s",&leitura);
+	
+	while(r != -1){ //escrevo os resultados da seleçao em saida.dad
+		int i,j=0;
+		for(i=0;i<=indexAtributo;i++){
+			memset(atrSeraComparado,0,31);
+			int k = 0;
+			while(leitura[j]!=',' && leitura[j]!='\0'){
+				atrSeraComparado[k] = leitura[j];
+				j++;
+				k++;
+			}
+			j++;
+		}
+		
+		if(tipoAtributo == 'I'){
+			int iAtr;
+			int iVal;
+			sscanf(atrSeraComparado,"%d",&iAtr);
+			sscanf(valor,"%d",&iVal);
+			if(strcmp(operando,"=")==0){
+				if(iAtr == iVal){
+					fprintf(fp_saida_dad,"%s\n",leitura);
+					cardinalidade++;
+				}
+			}
+			if(strcmp(operando,"<")==0){
+				if(iAtr < iVal){
+					fprintf(fp_saida_dad,"%s\n",leitura);
+					cardinalidade++;
+				}
+			}
+			if(strcmp(operando,"<=")==0){
+				if(iAtr <= iVal){
+					fprintf(fp_saida_dad,"%s\n",leitura);
+					cardinalidade++;
+				}
+			}
+			if(strcmp(operando,">")==0){
+				if(iAtr > iVal){
+					fprintf(fp_saida_dad,"%s\n",leitura);
+					cardinalidade++;
+				}
+			}
+			if(strcmp(operando,">=")==0){
+				if(iAtr >= iVal){
+					fprintf(fp_saida_dad,"%s\n",leitura);
+					cardinalidade++;
+				}
+			}
+			if(strcmp(operando,"<>")==0){
+				if(iAtr != iVal){
+					fprintf(fp_saida_dad,"%s\n",leitura);
+					cardinalidade++;
+				}
+			}
+		}
+		else{
+			if(strcmp(operando,"=")==0){
+				if(strcmp(atrSeraComparado,valor)==0){
+					fprintf(fp_saida_dad,"%s\n",leitura);
+					cardinalidade++;
+				}
+			}
+			if(strcmp(operando,"<>")==0){
+				if(!strcmp(atrSeraComparado,valor)!=0){
+					fprintf(fp_saida_dad,"%s\n",leitura);
+					cardinalidade++;
+				}
+			}
+		}
+		r = fscanf(fp_entrada_dad,"%s",&leitura);
+		memset(atrSeraComparado,0,31);
 	}
+	int aux1,aux2;
+	fprintf(fp_saida_ctl,"%d,%d\n",grau,cardinalidade);
+	fscanf(fp_entrada_ctl,"%d,%d",&aux1,&aux2); 
+	r = fscanf(fp_entrada_ctl,"%s",&leitura);
+	while(r!=-1){
+		fprintf(fp_saida_ctl,"%s\n",leitura);
+		r = fscanf(fp_entrada_ctl,"%s",&leitura);
+	}
+	
+	fclose(fp_saida_dad);
+	fclose(fp_entrada_dad);
+	fclose(fp_saida_ctl);
+	fclose(fp_entrada_ctl);
+	fclose(fp_saida_alg);
 }
 
 void join(char* nomeTabA, char* nomeTabB, char* cond, char* arqAlg, char* arqDad, char* arqCtl){
@@ -220,6 +330,7 @@ void le_alg(char* nomeArq, char* nomeDad, char* nomeCtl){
 	int r;
     long pos;
     int funcAntesProject = 0;
+    
     r = fscanf(fp_alg, "%s", operacao);//leio tudo pra operaçao
     if (r != 1) {
         printf("Nao foi possivel ler arquivo.alg!");

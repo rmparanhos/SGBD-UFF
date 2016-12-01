@@ -1,4 +1,4 @@
-6,1
+6,0
 NOME,C,nn,ord,chv
 IDADE,I,nn
 CPF,I,nn
