@@ -1,6 +1,6 @@
 [Project]
-FileName=Bduff2.dev
-Name=Bduff2
+FileName=BDUFF 3.0.dev
+Name=BDUFF 3.0
 Type=1
 Ver=2
 ObjFiles=
@@ -51,7 +51,7 @@ AutoIncBuildNr=0
 SyncProduct=1
 
 [Unit1]
-FileName=bduff2.c
+FileName=bduff3.c
 CompileCpp=0
 Folder=
 Compile=1
