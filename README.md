@@ -1,7 +1,9 @@
 # SGBD-UFF
+(Este trabalho ganhou o premio de melhor trabalho 2 em BD 2016.2)
 Implementação de um SGBD com as funçoes "Create Table", "Insert" e "Select".
 Ele funciona lendo um arquivo .sql escrito pelo usuario. 
 A sintaxe que deve ser usada é:
+
   CREATE TABLE nomeTabela(
   atr1 TIPO(INTEGER ou STRING) [NN] [KEY] [ORD],
   atr2 TIPO(INTEGER ou STRING) [NN] [KEY] [ORD],
